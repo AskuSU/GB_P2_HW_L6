@@ -3,8 +3,7 @@
 #include<vector>
 #include<set>
 #include"MyLib.h"
-//#include"Task1.h"
-//#include"Task2.h"
+#include"Task2.h"
 #include"Task3-4-5.h"
 
 using namespace std;
@@ -19,13 +18,14 @@ void Task1()
 
 void Task2()
 {
-	cout << "Работа с шаблонным классом Pair:" << endl;
-	
+	cout << "Работа с собственным манипулятором endll:" << endl;
+	cout << "Привет" << endll;
+	cout << "После endll" << endl;
 }
 
 void Task3()
 {
-	cout << "\t\tСыграем в Blackjack!\n\n" << endl << endl;
+	cout << "\t\tСыграем в Blackjack!" << endl << endl;
 	int numPlayers = 0;
 	while (numPlayers < 1 || numPlayers > 7)
 	{
