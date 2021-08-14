@@ -8,8 +8,8 @@ using namespace std;
 
 namespace myLib
 {
-	template <typename _Ty>
-	inline _Ty getUserInput(bool allowZero = false);
+	template <typename T>
+	T getUserInput(bool allowZero = false, bool allowNegative = false, bool checkAllinput = false);
 	std::string getUserInputTxt();
 	unsigned short getUserSelectedTask(unsigned short qtyTask);
 
@@ -26,14 +26,14 @@ namespace myLib
 	string getNameFileFromUser(unsigned short indexF);
 }
 
-template <typename _Ty>
-_Ty myLib::getUserInput(bool allowZero)
+template <typename T>
+T myLib::getUserInput(bool allowZero, bool allowNegative, bool checkAllinput)
 {
 	while (true)
 	{
-		_Ty input;
+		T input;
 		cin >> input;
-		if (cin.fail() || (input <= 0) && !allowZero || (input < 0) && allowZero)
+		if (cin.fail() || (input < 0) && !allowNegative || (input == 0) && !allowZero)
 		{
 			cout << "Ошибка ввода, повторите ввод: ";
 			cin.clear();
@@ -41,9 +41,18 @@ _Ty myLib::getUserInput(bool allowZero)
 		}
 		else
 		{
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			return input;
+			if ((cin.peek() != 10) && checkAllinput)
+			{
+				cout << "Ошибка ввода, повторите ввод: ";
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			}
+			else
+			{
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				return input;
+			}
 		}
 	}
 }

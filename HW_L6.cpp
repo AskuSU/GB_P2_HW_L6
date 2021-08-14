@@ -12,8 +12,9 @@ using namespace myLib;
 
 void Task1()
 {
-	cout << "Работа с шаблонным классом Pair1:" << endl;
-	
+	cout << "Ввод числа int с защитой от \"Дурака\":" << endl;
+	int64_t a = getUserInput<int64_t>(true, true, true);
+	cout << "Вы ввели: " << a << endl;
 }
 
 void Task2()
