@@ -41,7 +41,7 @@ T myLib::getUserInput(bool allowZero, bool allowNegative, bool checkAllinput)
 		}
 		else
 		{
-			if ((cin.peek() != 10) && checkAllinput)
+			if ((cin.peek() != cin.widen('\n')) && checkAllinput)
 			{
 				cout << "Ошибка ввода, повторите ввод: ";
 				cin.clear();
