@@ -1,4 +1,4 @@
-#include<iostream>
+п»ї#include<iostream>
 #include"Task3-4-5.h"
 
 Rank operator++(Rank& den) { return den = (Rank)(std::underlying_type<Rank>::type(den) + 1); };
@@ -76,7 +76,7 @@ void Hand::Add(Card* pCard)
 
 void Hand::Clear()
 {
-	for (auto cr : cards)
+	for (auto& cr : cards)
 	{
 		delete cr;
 	}
@@ -85,34 +85,34 @@ void Hand::Clear()
 
 uint16_t Hand::GetTotal() const
 {
-	// если карт в руке нет, возвращает значение 0
+	// РµСЃР»Рё РєР°СЂС‚ РІ СЂСѓРєРµ РЅРµС‚, РІРѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ 0
 	if (cards.empty())
 	{
 		return 0;
 	}
-	//если первая карта имеет значение 0, то она лежит рубашкой вверх:
-	// вернуть значение 0
+	//РµСЃР»Рё РїРµСЂРІР°СЏ РєР°СЂС‚Р° РёРјРµРµС‚ Р·РЅР°С‡РµРЅРёРµ 0, С‚Рѕ РѕРЅР° Р»РµР¶РёС‚ СЂСѓР±Р°С€РєРѕР№ РІРІРµСЂС…:
+	// РІРµСЂРЅСѓС‚СЊ Р·РЅР°С‡РµРЅРёРµ 0
 	if (cards[0]->GetValue() == 0)
 	{
 		return 0;
 	}
-	// находит сумму очков всех карт, каждый туз дает 1 очко
+	// РЅР°С…РѕРґРёС‚ СЃСѓРјРјСѓ РѕС‡РєРѕРІ РІСЃРµС… РєР°СЂС‚, РєР°Р¶РґС‹Р№ С‚СѓР· РґР°РµС‚ 1 РѕС‡РєРѕ
 	uint16_t total = 0;
-	for (auto cr : cards)
+	for (const auto& cr : cards)
 	{
 		total += cr->GetValue();
 	}
-	// определяет, держит ли рука туз
+	// РѕРїСЂРµРґРµР»СЏРµС‚, РґРµСЂР¶РёС‚ Р»Рё СЂСѓРєР° С‚СѓР·
 	bool containsAce = false;
-	for (auto cr : cards)
+	for (const auto& cr : cards)
 	{
 		if (cr->GetValue() == static_cast<uint16_t>(Rank::ACE)) containsAce = true;
 	}
-	// если рука держит туз и сумма довольно маленькая, туз дает 11 очков
+	// РµСЃР»Рё СЂСѓРєР° РґРµСЂР¶РёС‚ С‚СѓР· Рё СЃСѓРјРјР° РґРѕРІРѕР»СЊРЅРѕ РјР°Р»РµРЅСЊРєР°СЏ, С‚СѓР· РґР°РµС‚ 11 РѕС‡РєРѕРІ
 	if (containsAce && total <= 11)
 	{
-		// добавляем только 10 очков, поскольку мы уже добавили
-		// за каждый туз по одному очку
+		// РґРѕР±Р°РІР»СЏРµРј С‚РѕР»СЊРєРѕ 10 РѕС‡РєРѕРІ, РїРѕСЃРєРѕР»СЊРєСѓ РјС‹ СѓР¶Рµ РґРѕР±Р°РІРёР»Рё
+		// Р·Р° РєР°Р¶РґС‹Р№ С‚СѓР· РїРѕ РѕРґРЅРѕРјСѓ РѕС‡РєСѓ
 		total += 10;
 	}
 	return total;
@@ -120,16 +120,102 @@ uint16_t Hand::GetTotal() const
 
 GenericPlayer::GenericPlayer(const std::string& name) : name(name)
 {}
+
 bool GenericPlayer::IsBoosted() const
 {
 	return (GetTotal() > 21);
 }
 void GenericPlayer::Bust() const
 {
-	std::cout << name << " перебор" << std::endl;
+	std::cout << name << " РїРµСЂРµР±РѕСЂ" << std::endl;
 }
+
+House::House(const std::string& name) : GenericPlayer(name)
+{}
 
 bool House::IsHitting() const
 {
-	return false;
+	return (GetTotal() <= 16);
+}
+
+void House::FlipFirstCard()
+{
+	if (!(cards.empty()))
+	{
+		cards[0]->Flip();
+	}
+	else
+	{
+		std::cout << "РќРµС‚ РєР°СЂС‚ РґР»СЏ РїРµСЂРµРІРѕСЂРѕС‚Р°!\n";
+	}
+}
+
+std::ostream& operator<<(std::ostream& os, const Card& aCard)
+{
+	const std::string RANKS[] = { "0", "A", "2", "3", "4", "5", "6", "7", "8",
+							 "9","10", "J", "Q", "K" };
+	const std::string SUITS[] = { "c", "d", "h", "s" };
+	if (aCard.isFaceUp)
+	{
+		os << RANKS[static_cast<uint16_t>(aCard.rank)] << SUITS[static_cast<uint16_t>(aCard.suit)];
+	}
+	else
+	{
+		os << "XX";
+	}
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const GenericPlayer& aGenericPlayer)
+{
+	os << aGenericPlayer.name << ":\t";
+	//std::vector<Card*>::const_iterator pCard;
+	if (!aGenericPlayer.cards.empty())
+	{
+		for (const auto& pCard : aGenericPlayer.cards)
+		{
+			os << pCard << "\t";
+		}
+		/*for (pCard = aGenericPlayer.cards.begin();
+			pCard != aGenericPlayer.cards.end();
+			++pCard)
+		{
+			os << *(*pCard) << "\t";
+		}*/
+		if (aGenericPlayer.GetTotal() != 0)
+		{
+			std::cout << "(" << aGenericPlayer.GetTotal() << ")";
+		}
+	}
+	else
+	{
+		os << "<empty>";
+	}
+	return os;
+}
+
+Player::Player(const std::string& name) : GenericPlayer(name)
+{}
+
+bool Player::IsHitting() const
+{
+	std::cout << name << ", РЅСѓР¶РЅР° РµС‰Рµ РєР°СЂС‚Р°? (Y/N): ";
+	char response;
+	std::cin >> response;
+	return (response == 'y' || response == 'Y');
+}
+
+void Player::Win() const
+{
+	std::cout << name << " РІС‹РёРіСЂР°Р»." << std::endl;
+}
+
+void Player::Lose() const
+{
+	std::cout << name << " РїСЂРѕРёРіСЂР°Р»." << std::endl;
+}
+
+void Player::Push() const
+{
+	std::cout << name << " СЃС‹РіСЂР°Р» РІРЅРёС‡СЊСЋ." << std::endl;
 }

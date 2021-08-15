@@ -2,6 +2,7 @@
 #include <type_traits>
 #include<string>
 #include<vector>
+#include<ostream>
 //#include<stdint.h>
 
 class GenericPlayer;
@@ -39,6 +40,8 @@ public:
 	void Flip() { isFaceUp = !isFaceUp; };
 	uint16_t GetValue() const;
 
+	friend std::ostream& operator<<(std::ostream& os, const Card& aCard);
+
 private:
 	Rank rank;
 	Suit suit;
@@ -46,6 +49,8 @@ private:
 	//bool isStayedInTheDeck;
 
 };
+
+std::ostream& operator<<(std::ostream& os, const Card& aCard);
 
 class Hand
 {
@@ -57,7 +62,7 @@ public:
 	void Clear();				//Очищает руку от карт. Удаляет все указатели из вектора cards, устраняя все связанные с ними объекты в куче
 	uint16_t GetTotal() const;	//Возвращает сумму очков карт руки, присваивая тузу значение 1 или 11 в зависимости от ситуации
 
-private:
+protected:
 	std::vector<Card*> cards;
 };
 
@@ -120,18 +125,27 @@ public:
 	bool IsBoosted() const;
 	// объявляет, что игрок имеет перебор
 	void Bust() const;
-
-private:
+	
+	friend std::ostream& operator<<(std::ostream& os, const GenericPlayer& aGenericPlayer);
+	
+protected:
 	std::string name;
 
 };
 
+std::ostream& operator<<(std::ostream& os, const GenericPlayer& aGenericPlayer);
+
 class Player : public GenericPlayer
 {
 public:
+	Player(const std::string& name = "");
+	virtual ~Player() = default;
+
+	//спрашивает у пользователя, нужна ли ему еще одна карта
 	virtual bool IsHitting() const override;
 	void Win() const;
 	void Lose() const;
+	//сыграл вничью
 	void Push() const;
 private:
 
@@ -140,6 +154,10 @@ private:
 class House : public GenericPlayer
 {
 public:
+	House(const std::string& name = "House");
+	virtual ~House() = default;
+
+	//проыеряет, нужна ли диллеру еще одна карта
 	virtual bool IsHitting() const override;
 	void FlipFirstCard();
 private:
